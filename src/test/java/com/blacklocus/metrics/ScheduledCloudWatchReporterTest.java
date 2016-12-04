@@ -1,12 +1,12 @@
 /**
  * Copyright 2013-2016 BlackLocus
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,28 +15,37 @@
  */
 package com.blacklocus.metrics;
 
-import com.amazonaws.services.cloudwatch.AmazonCloudWatchAsyncClient;
-import com.codahale.metrics.Gauge;
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Timer;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.cloudwatch.AmazonCloudWatchAsync;
+import com.amazonaws.services.cloudwatch.AmazonCloudWatchAsyncClient;
+import com.codahale.metrics.Gauge;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
+
+import org.junit.Ignore;
+import org.junit.Test;
+
 /**
  * @author Jason Dunkelberger (dirkraft)
  */
-public class CloudWatchReporterTest {
+public class ScheduledCloudWatchReporterTest {
 
     @Test
     @Ignore("ad-hoc usage")
     public void createTestData() throws InterruptedException {
 
-        ExecutorService executors = Executors.newCachedThreadPool();
+        final ExecutorService executors = Executors.newCachedThreadPool();
+        final AmazonCloudWatchAsync cloudWatch = new AmazonCloudWatchAsyncClient();
+
+        // Publish metrics to us-west-2 (Oregon) region
+        cloudWatch.setRegion(Region.getRegion(Regions.US_WEST_2));
 
         // increments the counter by 1 every second, meter ticked once, histogram ticked once, gauge given 1
         executors.submit(new Callable<Void>() {
@@ -44,12 +53,12 @@ public class CloudWatchReporterTest {
             public Void call() throws Exception {
 
                 MetricRegistry metricRegistry = new MetricRegistry();
-                new CloudWatchReporter(
+                new ScheduledCloudWatchReporter(
                         metricRegistry,
-                        CloudWatchReporterTest.class.getSimpleName(),
-                        new AmazonCloudWatchAsyncClient()
-                )
-                        .withDimensions("unit=test group=first")
+                        new CloudWatchReporter(
+                                ScheduledCloudWatchReporterTest.class.getSimpleName(),
+                                cloudWatch)
+                                .withDimensions("unit=test group=first"))
                         .start(1, TimeUnit.MINUTES);
 
                 metricRegistry.register("TheGauge", new Gauge<Long>() {
@@ -66,7 +75,7 @@ public class CloudWatchReporterTest {
                     }
                 });
 
-                while(!Thread.interrupted()) {
+                while (!Thread.interrupted()) {
                     metricRegistry.counter("TheCounter TestDim=Yellow TestToken* machine=number1*").inc(1);
                     metricRegistry.meter("TheMeter").mark();
                     metricRegistry.histogram("TheHistogram").update(1);
@@ -85,12 +94,12 @@ public class CloudWatchReporterTest {
             public Void call() throws Exception {
 
                 MetricRegistry metricRegistry = new MetricRegistry();
-                new CloudWatchReporter(
+                new ScheduledCloudWatchReporter(
                         metricRegistry,
-                        CloudWatchReporterTest.class.getSimpleName(),
-                        new AmazonCloudWatchAsyncClient()
-                )
-                        .withDimensions("unit=test group=second")
+                        new CloudWatchReporter(
+                                ScheduledCloudWatchReporterTest.class.getSimpleName(),
+                                cloudWatch)
+                                .withDimensions("unit=test group=second"))
                         .start(1, TimeUnit.MINUTES);
 
                 metricRegistry.register("TheGauge", new Gauge<Long>() {
@@ -107,7 +116,7 @@ public class CloudWatchReporterTest {
                     }
                 });
 
-                while(!Thread.interrupted()) {
+                while (!Thread.interrupted()) {
                     metricRegistry.counter("TheCounter TestDim=Yellow").inc(2);
                     metricRegistry.meter("TheMeter").mark(3);
                     metricRegistry.histogram("TheHistogram").update(2);

@@ -52,7 +52,7 @@ public class MetricNameBuilder {
 
     /**
      * @param nameToken must be a single valid name segment which is summarized by the regex
-     *             {@link CloudWatchReporter#VALID_NAME_TOKEN_RGX} (it may end in the permute operator).
+     *             {@link Constants#VALID_NAME_TOKEN_RGX} (it may end in the permute operator).
      * @return this for chaining
      * @throws MetricsNameSyntaxException on validation failure
      */
@@ -68,7 +68,7 @@ public class MetricNameBuilder {
 
     /**
      * @param nameToken    must be a single valid name segment which is summarized by the regex
-     *                {@link CloudWatchReporter#VALID_NAME_TOKEN_RGX} (it may end in the permute operator).
+     *                {@link Constants#VALID_NAME_TOKEN_RGX} (it may end in the permute operator).
      * @param permute whether or not this token should permute
      * @return this for chaining
      * @throws MetricsNameSyntaxException on validation failure
