@@ -1,11 +1,16 @@
-CloudWatch integration for codahale metrics
+CloudWatch integration for Dropwizard metrics
 ===========================================
 
-This is a metrics reporter implementation
-([codahale/metrics/ScheduledReporter.java](https://github.com/codahale/metrics/blob/master/metrics-core/src/main/java/com/codahale/metrics/ScheduledReporter.java))
-from [codahale metrics](http://metrics.codahale.com/) (v3.x) to [Amazon CloudWatch](http://aws.amazon.com/cloudwatch/).
+This is a fork of [blacklocus/metrics-cloudwatch](https://github.com/blacklocus/metrics-cloudwatch), which provides a
+subclass of [ScheduledReporter](http://metrics.dropwizard.io/3.1.0/apidocs/com/codahale/metrics/ScheduledReporter.html)
+from [Dropwizard metrics](http://metrics.dropwizard.io/) (v3.x) that publishees to [Amazon CloudWatch](http://aws.amazon.com/cloudwatch/).
 
-[![Build Status](https://travis-ci.org/blacklocus/metrics-cloudwatch.svg)](https://travis-ci.org/blacklocus/metrics-cloudwatch)
+This fork decouples the CloudWatch publishing functionality from ScheduledReporter to give users more fine-grained control over when metrics
+are published to CloudWatch. This is useful for serverless applications where you cannot rely on the container to stay active between requests.
+In cases like this, it's better to use a different MetricRegistry instance for each request and report those metrics once at the end of the
+request.
+
+[![Build Status](https://travis-ci.org/jlhood/metrics-cloudwatch.svg)](https://travis-ci.org/jlhood/metrics-cloudwatch)
 
 ### Table of Contents ###
 
@@ -27,11 +32,11 @@ repositories {
 }
 
 dependencies {
-    compile 'com.blacklocus:metrics-cloudwatch:0.4.0'
+    compile 'com.jlhood:metrics-cloudwatch:1.0.0'
 }
 ```
 
-Other dependency formats on [mvnrepository.com](http://mvnrepository.com/artifact/com.blacklocus/metrics-cloudwatch/0.4.0)
+Other dependency formats on [mvnrepository.com](http://mvnrepository.com/artifact/com.jlhood/metrics-cloudwatch/1.0.0)
 
 #### Current Snapshot Release ####
 
@@ -43,20 +48,37 @@ repositories {
 }
 
 dependencies {
-    compile 'com.blacklocus:metrics-cloudwatch:0.4.1-SNAPSHOT'
+    compile 'com.jlhood:metrics-cloudwatch:1.0.1-SNAPSHOT'
 }
 ```
 
 
 ### Usage ###
 
-Here is a bare minimum example, and how we generally use the CloudWatchReporter. We create a class to represent a namespace
-of metrics and provide methods enumerating the metrics recorded. The reporter interval is at 1 minute which will report
-new data every minute for the last minute to CloudWatch. 1 minute is the minimum resolution of CloudWatch. If you wanted
-to save money on API requests, you could go every 5 minutes or longer, keeping in mind that each data point to CloudWatch
-then represents 5 minutes, and you shouldn't view periods smaller than that in the CloudWatch console.
+Here is a bare minimum example of using the standalone CloudWatchReporter to report metrics on a per-request basis.
 
-<strong>Please prefer the Builder.</strong> Legacy users can continue to use the CloudWatchReporter constructors directly for backwards-compatibility with older versions.
+```java
+class MyOperation implements RequestHandler<I, O> {
+    public O handleRequest(I request) {
+        final MetricRegistry registry = new MetricRegistry();
+        try {
+            // process request
+        } finally {
+            new CloudWatchReporter(
+                    MyOperation.class.getSimpleName(),
+                    new AmazonCloudWatchAsyncClient()
+            ).report(registry);
+        }
+    }
+}
+```
+
+Here is a bare minimum example of using the ScheduledCloudWatchReporter to periodically publish metrics over time. Create
+a class to represent a namespace of metrics and provide methods enumerating the metrics recorded. The reporter interval is
+at 1 minute which will report new data every minute for the last minute to CloudWatch. 1 minute is the minimum resolution
+of CloudWatch. If you wanted to save money on API requests, you could go every 5 minutes or longer, keeping in mind that
+each data point to CloudWatch then represents 5 minutes, and you shouldn't view periods smaller than that in the CloudWatch
+console.
 
 ```java
 class ExampleMetrics {
@@ -64,11 +86,13 @@ class ExampleMetrics {
     private final MetricRegistry registry = new MetricRegistry();
 
     public ExampleMetrics() {
-        // The builder has many options, but namespace and registry are the minimum.
-        new CloudWatchReporterBuilder()
-                .withNamespace(ExampleMetrics.class.getSimpleName())
-                .withRegistry(registry)
-                .build()
+        // CloudWatchReporter has many settings, see javadoc for details
+        new ScheduledCloudWatchReporter(
+                registry,
+                new CloudWatchReporter(
+                        ExampleMetrics.class.getSimpleName(),
+                        new AmazonCloudWatchAsyncClient()
+                ))
                 .start(1, TimeUnit.MINUTES);
     }
 
@@ -101,11 +125,11 @@ public class ExampleApp {
 }
 ```
 
-If you already have a Codahale MetricsRegistry, you only need to give it to a CloudWatchReporterBuilder and build a reporter to start submitting
+If you already have a Dropwizard metrics MetricsRegistry, you only need to give it to a ScheduledCloudWatchReporter start submitting
 all your existing metrics code to CloudWatch. Note that some symbols in the metric names have special meaning explained below.
 
 In the test code, there is a test app that generates bogus metrics from two simulated machines (threads):
-[CloudWatchReporterTest.java](https://github.com/blacklocus/metrics-cloudwatch/blob/master/src/test/java/com/blacklocus/metrics/CloudWatchReporterTest.java)
+[ScheduledCloudWatchReporterTest.java](https://github.com/jlhood/metrics-cloudwatch/blob/master/src/test/java/com/blacklocus/metrics/ScheduledCloudWatchReporterTest.java)
 
 
 ### Metric types ###
@@ -213,7 +237,7 @@ of your stack. So be wary of metrics explosions.
 Development
 -----------
 
-    git clone git@github.com:blacklocus/metrics-cloudwatch
+    git clone git@github.com:jlhood/metrics-cloudwatch
     cd metrics-cloudwatch
     ./gradlew idea
 
@@ -224,5 +248,5 @@ Open the metrics-cloudwatch.ipr. Do NOT enable gradle integration in IntelliJ.
 License
 -------
 
-Copyright 2013-2016 BlackLocus under [the Apache 2.0 license](LICENSE)
+Copyright 2016 James Hood under [the Apache 2.0 license](LICENSE)
 
