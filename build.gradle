@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Identifiers
 
-group = 'com.blacklocus'
-version = '0.4.1-SNAPSHOT'
+group = 'com.jlhood'
+version = '1.0.0-SNAPSHOT'
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -135,7 +135,7 @@ uploadArchives {
         pom.project {
             name 'metrics-cloudwatch'
             description "A codahale metrics reporter to Amazon CloudWatch"
-            url 'https://github.com/blacklocus/metrics-cloudwatch'
+            url 'https://github.com/jlhood/metrics-cloudwatch'
             licenses {
                 license {
                     name 'The Apache Software License, Version 2.0'
@@ -144,20 +144,20 @@ uploadArchives {
                 }
             }
             scm {
-                url 'scm:https://github.com/blacklocus/metrics-cloudwatch.git'
-                connection 'scm:git://github.com/blacklocus/metrics-cloudwatch.git'
-                developerConnection 'scm:git@github.com:blacklocus/metrics-cloudwatch.git'
+                url 'scm:https://github.com/jlhood/metrics-cloudwatch.git'
+                connection 'scm:git://github.com/jlhood/metrics-cloudwatch.git'
+                developerConnection 'scm:git@github.com:jlhood/metrics-cloudwatch.git'
             }
             organization {
-                name 'BlackLocus'
-                url 'http://www.blacklocus.com'
+                name 'James Hood'
+                url 'http://jlhood.com'
             }
             developers {
                 developer {
-                    id 'dirkraft'
-                    name 'Jason Dunkelberger'
-                    organization 'BlackLocus'
-                    organizationUrl 'http://www.blacklocus.com'
+                    id 'jlhood'
+                    name 'James Hood'
+                    organization 'James Hood'
+                    organizationUrl 'http://jlhood.com'
                 }
             }
         }
