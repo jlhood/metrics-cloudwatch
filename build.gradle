@@ -118,7 +118,7 @@ signing {
 
 uploadArchives {
     repositories.mavenDeployer {
-        beforeDeployment { MavenDeployment deployment -> signPom(deployment) }
+        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
         //# ./gradlew -PdeployUrl=http://server/artifactory/repo -PdeployUsername=admin -PdeployPassword=pass uploadArchives
         repository(
