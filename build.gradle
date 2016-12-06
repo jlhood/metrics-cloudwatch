@@ -134,7 +134,7 @@ uploadArchives {
 
         pom.project {
             name 'metrics-cloudwatch'
-            description "A codahale metrics reporter to Amazon CloudWatch"
+            description "A Dropwizard metrics reporter to Amazon CloudWatch"
             url 'https://github.com/jlhood/metrics-cloudwatch'
             licenses {
                 license {
