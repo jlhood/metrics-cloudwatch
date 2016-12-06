@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.blacklocus.metrics;
+package com.jlhood.metrics;
 
 import com.amazonaws.services.cloudwatch.model.Dimension;
 import com.amazonaws.services.cloudwatch.model.MetricDatum;
@@ -29,11 +29,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.blacklocus.metrics.Constants.DEF_DIM_NAME_TYPE;
+import static com.jlhood.metrics.Constants.DEF_DIM_NAME_TYPE;
 
-/**
- * @author Jason Dunkelberger (dirkraft)
- */
 public class DemuxedKeyTest {
 
     @Test

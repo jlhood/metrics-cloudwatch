@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.blacklocus.metrics;
+package com.jlhood.metrics;
 
 import com.amazonaws.services.cloudwatch.model.Dimension;
 import com.amazonaws.services.cloudwatch.model.MetricDatum;
@@ -29,11 +29,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.blacklocus.metrics.Constants.*;
+import static com.jlhood.metrics.Constants.*;
 
-/**
- * @author Jason Dunkelberger (dirkraft)
- */
 class DemuxedKey {
 
     final PermutableChain<String> nameChain;

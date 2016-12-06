@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.blacklocus.metrics;
+package com.jlhood.metrics;
 
 import java.util.ArrayList;
 import java.util.Collection;

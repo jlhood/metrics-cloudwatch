@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.blacklocus.metrics;
+package com.jlhood.metrics;
 
 import com.amazonaws.services.cloudwatch.model.Dimension;
 import com.amazonaws.services.cloudwatch.model.StatisticSet;

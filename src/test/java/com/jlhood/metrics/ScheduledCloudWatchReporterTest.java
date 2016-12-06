@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package com.blacklocus.metrics;
+package com.jlhood.metrics;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import com.amazonaws.ClientConfiguration;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchAsync;
@@ -33,9 +32,6 @@ import com.codahale.metrics.Timer;
 import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- * @author Jason Dunkelberger (dirkraft)
- */
 public class ScheduledCloudWatchReporterTest {
 
     @Test
