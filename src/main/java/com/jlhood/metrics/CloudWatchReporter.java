@@ -292,7 +292,7 @@ public class CloudWatchReporter implements Reporter {
      * @param meters     meter metrics.
      * @param timers     timer metrics.
      */
-    public void report(SortedMap<String, Gauge> gauges,
+    void report(SortedMap<String, Gauge> gauges,
                        SortedMap<String, Counter> counters,
                        SortedMap<String, Histogram> histograms,
                        SortedMap<String, Meter> meters,
