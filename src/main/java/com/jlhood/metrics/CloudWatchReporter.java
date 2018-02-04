@@ -397,11 +397,6 @@ public class CloudWatchReporter implements Reporter {
     void reportCounter(Map.Entry<String, ? extends Counting> entry, String typeDimValue, List<MetricDatum> data) {
         Counting metric = entry.getValue();
         final long diff = diffLast(metric);
-        if (diff == 0) {
-            // Don't submit metrics that have not changed. No reason to keep these alive. Also saves on CloudWatch
-            // costs.
-            return;
-        }
 
         DemuxedKey key = new DemuxedKey(appendGlobalDimensions(entry.getKey()));
         Iterables.addAll(data, key.newDatums(typeDimName, typeDimValue, new Function<MetricDatum, MetricDatum>() {
