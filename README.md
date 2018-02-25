@@ -32,7 +32,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.jlhood:metrics-cloudwatch:1.0.0'
+    compile 'com.jlhood:metrics-cloudwatch:1.0.1'
 }
 ```
 
@@ -48,7 +48,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.jlhood:metrics-cloudwatch:1.0.1-SNAPSHOT'
+    compile 'com.jlhood:metrics-cloudwatch:1.0.2-SNAPSHOT'
 }
 ```
 
